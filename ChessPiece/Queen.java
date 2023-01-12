@@ -32,7 +32,6 @@ public final class Queen extends ChessPiece {
         currentHeight = height;
         currentWidth = width;
 
-        chessBoard.setLastMovedPiece(this);
     }
 
     @Override
@@ -55,8 +54,11 @@ public final class Queen extends ChessPiece {
                 addToLegalMoves(verticalDisplacement, horizontalDisplacement);
                 //Since we found an enemy, we can't skip him, we can only attack him and take his place
                 if(isNotEmptySpace(verticalDisplacement, horizontalDisplacement))
-                    if(isEnemy(verticalDisplacement, horizontalDisplacement))
+                    if(isEnemy(verticalDisplacement, horizontalDisplacement)){
+                        if(isKing(verticalDisplacement, horizontalDisplacement))
+                            chessBoard.setCheckingPiece(this);
                         break;
+                    }
             }
         }
 

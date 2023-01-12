@@ -11,7 +11,7 @@ public class ChessBoard extends Board {
     private final Set<Pair<Integer, Integer>> allBlackPotentialLegalMoves = new HashSet<>();
     private final ChessPiece whiteKing;
     private final ChessPiece blackKing;
-    private ChessPiece lastMovedPiece = null;
+    private ChessPiece checkingPiece = null;
     private boolean kingIsCheckedByTwoEnemies = false;
 
     public ChessBoard(){
@@ -137,7 +137,7 @@ public class ChessBoard extends Board {
     public Set<Pair<Integer, Integer>> getAllBlackLegalMoves() { return allBlackLegalMoves; }
     public Set<Pair<Integer, Integer>> getAllWhitePotentialLegalMoves() { return allWhitePotentialLegalMoves; }
     public Set<Pair<Integer, Integer>> getAllBlackPotentialLegalMoves() { return allBlackPotentialLegalMoves; }
-    public void setLastMovedPiece(ChessPiece piece) { lastMovedPiece = piece; }
+    public void setCheckingPiece(ChessPiece piece) { checkingPiece = piece; }
 
     HashMap<ChessPiece, ArrayList<Pair<Integer, Integer>>> checkForIndirectAttacks(){
         //If a piece is attacking another king indirectly, ie(there exists exactly one enemy piece between it
@@ -298,7 +298,7 @@ public class ChessBoard extends Board {
         if(!kingIsCheckedByTwoEnemies){
             //check if the attacking piece is killable
             HashMap<Pair<Integer, Integer>, Pair<Integer, Integer>> whiteToAttacker
-                    = storePossibleAttackForWhite(lastMovedPiece);
+                    = storePossibleAttackForWhite(checkingPiece);
 
             checkIfWhiteKingCanEscape();
             clearWhiteLegalMoves();
@@ -306,11 +306,11 @@ public class ChessBoard extends Board {
             //Check what kind of piece has a check on the king and
             //Check the direction where the king is being attacked from
             ArrayList<Pair<Integer, Integer>> pathToKing = null;
-            if(lastMovedPiece instanceof Queen){
+            if(isQueen(checkingPiece)){
                 pathToKing = attemptToAvoidBlackQueen();
-            }else if(lastMovedPiece instanceof Bishop){
+            }else if(isBishop(checkingPiece)){
                 pathToKing = attemptToAvoidBlackBishop();
-            }else if(lastMovedPiece instanceof Rook){
+            }else if(isRook(checkingPiece)){
                 pathToKing = attemptToAvoidBlackRook();
             }
 
@@ -336,7 +336,7 @@ public class ChessBoard extends Board {
     void attemptToRemoveCheckForBlack(){
         if(!kingIsCheckedByTwoEnemies){
             HashMap<Pair<Integer, Integer>, Pair<Integer, Integer>> blackToAttacker
-                    = storePossibleAttackForBlack(lastMovedPiece);
+                    = storePossibleAttackForBlack(checkingPiece);
 
             checkIfBlackKingCanEscape();
             clearBlackLegalMoves();
@@ -344,11 +344,11 @@ public class ChessBoard extends Board {
             //Check what kind of piece has a check on the king and
             //Check the direction where the king is being attacked from
             ArrayList<Pair<Integer, Integer>> pathToKing = null;
-            if(lastMovedPiece instanceof Queen){
+            if(isQueen(checkingPiece)){
                 pathToKing = attemptToAvoidWhiteQueen();
-            }else if(lastMovedPiece instanceof Bishop){
+            }else if(isBishop(checkingPiece)){
                 pathToKing = attemptToAvoidWhiteBishop();
-            }else if(lastMovedPiece instanceof Rook){
+            }else if(isRook(checkingPiece)){
                 pathToKing = attemptToAvoidWhiteRook();
             }
 
@@ -372,7 +372,7 @@ public class ChessBoard extends Board {
     ArrayList<Pair<Integer, Integer>> attemptToAvoidWhiteQueen(){
         boolean kingFound = false;
         ArrayList<Pair<Integer, Integer>> pathToKing = new ArrayList<>();
-        Queen queen = (Queen)(lastMovedPiece);
+        Queen queen = (Queen)(checkingPiece);
         int[] queenVerticalMoves = queen.getMoves().getVerticalMoves();
         int[] queenHorizontalMoves = queen.getMoves().getHorizontalMoves();
         for(int i = 0; i < 8; ++i){
@@ -497,7 +497,7 @@ public class ChessBoard extends Board {
     ArrayList<Pair<Integer, Integer>> attemptToAvoidWhiteBishop(){
         boolean kingFound = false;
         ArrayList<Pair<Integer, Integer>> pathToKing = new ArrayList<>();
-        Bishop bishop = (Bishop)(lastMovedPiece);
+        Bishop bishop = (Bishop)(checkingPiece);
         int[] bishopVerticalMoves = bishop.getMoves().getVerticalMoves();
         int[] bishopHorizontalMoves = bishop.getMoves().getHorizontalMoves();
         for(int i = 0; i < 4; ++i){
@@ -530,7 +530,7 @@ public class ChessBoard extends Board {
     ArrayList<Pair<Integer, Integer>> attemptToAvoidWhiteRook(){
         boolean kingFound = false;
         ArrayList<Pair<Integer, Integer>> pathToKing = new ArrayList<>();
-        Rook rook = (Rook)(lastMovedPiece);
+        Rook rook = (Rook)(checkingPiece);
         int[] rookVerticalMoves = rook.getMoves().getVerticalMoves();
         int[] rookHorizontalMoves = rook.getMoves().getHorizontalMoves();
         for(int i = 0; i < 4; ++i){
@@ -563,13 +563,13 @@ public class ChessBoard extends Board {
     ArrayList<Pair<Integer, Integer>> attemptToAvoidBlackQueen(){
         boolean kingFound = false;
         ArrayList<Pair<Integer, Integer>> pathToKing = new ArrayList<>();
-        Queen queen = (Queen)(lastMovedPiece);
+        Queen queen = (Queen)(checkingPiece);
         int[] queenVerticalMoves = queen.getMoves().getVerticalMoves();
         int[] queenHorizontalMoves = queen.getMoves().getHorizontalMoves();
         for(int i = 0; i < 8; ++i){
             for(int j = i * 7; j < (i + 1) * 7; ++j){
-                int verticalDisplacement = lastMovedPiece.getCurrentHeight() + queenVerticalMoves[j];
-                int horizontalDisplacement = lastMovedPiece.getCurrentWidth() + queenHorizontalMoves[j];
+                int verticalDisplacement = checkingPiece.getCurrentHeight() + queenVerticalMoves[j];
+                int horizontalDisplacement = checkingPiece.getCurrentWidth() + queenHorizontalMoves[j];
                 if(queen.notInBound(verticalDisplacement, horizontalDisplacement))
                     break;
                 if(queen.isEmptySpace(verticalDisplacement, horizontalDisplacement)){
@@ -596,7 +596,7 @@ public class ChessBoard extends Board {
     ArrayList<Pair<Integer, Integer>> attemptToAvoidBlackBishop(){
         boolean kingFound = false;
         ArrayList<Pair<Integer, Integer>> pathToKing = new ArrayList<>();
-        Bishop bishop = (Bishop)(lastMovedPiece);
+        Bishop bishop = (Bishop)(checkingPiece);
         int[] bishopVerticalMoves = bishop.getMoves().getVerticalMoves();
         int[] bishopHorizontalMoves = bishop.getMoves().getHorizontalMoves();
         for(int i = 0; i < 4; ++i){
@@ -629,7 +629,7 @@ public class ChessBoard extends Board {
     ArrayList<Pair<Integer, Integer>> attemptToAvoidBlackRook(){
         boolean kingFound = false;
         ArrayList<Pair<Integer, Integer>> pathToKing = new ArrayList<>();
-        Rook rook = (Rook)(lastMovedPiece);
+        Rook rook = (Rook)(checkingPiece);
         int[] rookVerticalMoves = rook.getMoves().getVerticalMoves();
         int[] rookHorizontalMoves = rook.getMoves().getHorizontalMoves();
         for(int i = 0; i < 4; ++i){

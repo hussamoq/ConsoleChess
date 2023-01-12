@@ -21,10 +21,14 @@ public final class Pawn extends ChessPiece{
         if(color == Color.WHITE){
             //A pawn can only move one step diagonally if it can attack another piece
             if(topLeftIsNotClear() && isEnemy(currentHeight - 1, currentWidth - 1)){
+                if(isKing(currentHeight - 1, currentWidth - 1))
+                    chessBoard.setCheckingPiece(this);
                 addToLegalMoves(currentHeight - 1, currentWidth - 1);
             }
 
             if(topRightIsNotClear() && isEnemy(currentHeight - 1, currentWidth + 1)){
+                if(isKing(currentHeight - 1, currentWidth + 1))
+                    chessBoard.setCheckingPiece(this);
                 addToLegalMoves( currentHeight - 1, currentWidth + 1);
             }
 
@@ -54,10 +58,14 @@ public final class Pawn extends ChessPiece{
 
         }else{
             if(topLeftIsNotClear() && isEnemy(currentHeight + 1, currentWidth + 1)){
+                if(isKing(currentHeight + 1, currentWidth + 1))
+                    chessBoard.setCheckingPiece(this);
                 addToLegalMoves(currentHeight + 1,currentWidth + 1);
             }
 
             if(topRightIsNotClear() && isEnemy(currentHeight + 1, currentWidth - 1)){
+                if(isKing(currentHeight + 1, currentWidth - 1))
+                    chessBoard.setCheckingPiece(this);
                 addToLegalMoves(currentHeight + 1,currentWidth - 1);
             }
 
@@ -110,8 +118,6 @@ public final class Pawn extends ChessPiece{
         //Update coordinates
         currentHeight = height;
         currentWidth = width;
-
-        chessBoard.setLastMovedPiece(this);
     }
 
     public boolean isAtLastSquare(){
