@@ -38,6 +38,12 @@ public final class Knight extends ChessPiece {
                 isEnemy(verticalDisplacement, horizontalDisplacement)){
                     addToLegalMoves(verticalDisplacement, horizontalDisplacement);
                 }
+
+                if(isNotEmptySpace(verticalDisplacement, horizontalDisplacement))
+                    if(isEnemy(verticalDisplacement, horizontalDisplacement)){
+                        if(isKing(verticalDisplacement, horizontalDisplacement))
+                            chessBoard.setCheckingPiece(this);
+                    }
             }
         }
 
@@ -62,8 +68,6 @@ public final class Knight extends ChessPiece {
 
         currentHeight = height;
         currentWidth = width;
-
-        chessBoard.setLastMovedPiece(this);
     }
 
     void calculateLegalInitialMoves(){
@@ -73,10 +77,11 @@ public final class Knight extends ChessPiece {
             int verticalDisplacement = currentHeight + tempVerticalMoves[i];
             int horizontalDisplacement = currentWidth + tempHorizontalMoves[i];
             //Make sure the knight's moves are well within range before adding to legalMoves
-            if(inBound(verticalDisplacement, horizontalDisplacement))
+            if(inBound(verticalDisplacement, horizontalDisplacement)){
                 if(isEmptySpace(verticalDisplacement, horizontalDisplacement)){
                     addToLegalMoves(verticalDisplacement,  horizontalDisplacement);
                 }
+            }
         }
     }
 }

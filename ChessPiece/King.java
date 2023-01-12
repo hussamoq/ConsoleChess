@@ -30,8 +30,6 @@ public final class King extends ChessPiece {
 
         currentHeight = height;
         currentWidth = width;
-
-        chessBoard.setLastMovedPiece(this);
     }
 
     @Override

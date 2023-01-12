@@ -122,6 +122,9 @@ public abstract class ChessPiece {
         legalMoves.add(new Pair<Integer, Integer>(width, height));
     }
     void clearLegalMoves() { legalMoves.clear(); }
+
+    boolean isKing(int height, int width) { return board.getGrid()[height][width] instanceof King; }
+
     void addToAllMoves(ChessBoard board){
         for(Pair<Integer, Integer> pair : legalMoves){
             if(color == Color.WHITE)
